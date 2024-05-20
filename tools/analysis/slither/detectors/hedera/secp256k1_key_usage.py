@@ -1,5 +1,5 @@
 """
-Detector to find instances where `ecrecover` is used in Solidity contracts.
+Detector to find instances where Hederas `createFungibleToken` is used with SECP256K1 token key type in Solidity contracts.
 """
 from slither.core.declarations import Contract
 from slither.detectors.abstract_detector import AbstractDetector, DetectorClassification
@@ -18,26 +18,30 @@ import re
 class Secp256k1KeyUsage(AbstractDetector):
     TARGET_ADDRESS = "address(0x167)"
     SEARCHED_VALUE = 'SECP256K1'
-    SELECTOR_STRING = 'getTokenKey(address,uint256)'
+    SELECTOR_STRING = 'createFungibleToken((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(int64,address,int64)),int64,int32)'
 
     ARGUMENT = 'detect-secp256k1_key'
-    HELP = 'Detects direct calls to the method `getTokenKey(address,uint256)` on address 0x167, specifically utilizing the parameter value SECP256K1.'
+    HELP = 'Detects direct calls to the method `createFungibleToken` on address 0x167, specifically utilizing the parameter value SECP256K1.'
     IMPACT = DetectorClassification.MEDIUM
     CONFIDENCE = DetectorClassification.HIGH
     WIKI = "https://docs.hedera.com/hedera/core-concepts/keys-and-signatures"
     WIKI_TITLE = "Usage of secp256k1_key"
-    WIKI_DESCRIPTION = "This detector identifies instances where the `getTokenKey(address,uint256)` method is called on address 0x167 with the `SECP256K1` parameter value."
+    WIKI_DESCRIPTION = "This detector identifies instances where the createFungibleToken method is called on address 0x167 with the `SECP256K1` parameter value."
     WIKI_RECOMMENDATION = "Consider using Hedera-supported key types such as Ed25519, as `ecrecover` expects ECDSA keys!"
     WIKI_EXPLOIT_SCENARIO = """
     ```solidity
-    import "./IHRC.sol";
     import "./HederaTokenService.sol";
-    import "./IHederaTokenService.sol";
+    import "./ExpiryHelper.sol";
     import "./KeyHelper.sol";
-    contract HTSContract is KeyHelper { {
-        function secp256k1() external {
-            supplyContract = 0x0000000000000000000000000000000000000000;
-            getSingleKey(KeyType.WIPE, KeyValueType.SECP256K1, '0x0000');
+    contract TokenCreateContract is HederaTokenService, ExpiryHelper, KeyHelper {
+        function createFungibleTokenWithSECP256K1AdminKeyPublic(address treasury, bytes memory adminKey) public payable {
+            IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](5);
+            keys[0] = getSingleKey(KeyType.ADMIN, KeyType.PAUSE, KeyValueType.SECP256K1, adminKey);
+            IHederaTokenService.Expiry memory expiry = IHederaTokenService.Expiry(0, treasury, 8000000);
+            IHederaTokenService.HederaToken memory token = IHederaTokenService.HederaToken(
+                "tokenName", "tokenSymbol", treasury, "memo", true, 10000, false, keys, expiry
+            );
+            HederaTokenService.createFungibleToken(token, 10000, 8);
         }
     }
     ```
@@ -55,7 +59,7 @@ class Secp256k1KeyUsage(AbstractDetector):
                     target_address_called = target_address_called or self.is_required_method_called(ir, function)
 
         if target_address_called and search_param_used:
-            info = [f"HTS method getTokenKey with secp256k1_key may be possibly called.\n"]
+            info = [f"HTS method createFungibleToken with secp256k1_key may be possibly called.\n"]
             result = self.generate_result(info)
             results.append(result)
 
