@@ -1,6 +1,9 @@
 services:
   slither:
-    build: slither-analysis # WITH ecrecover DETECTOR preinstalled!
+    build: . # WITH ecrecover DETECTOR preinstalled!
     extra_hosts:
       - "host.docker.internal:host-gateway"
     entrypoint: ["sleep", "infinity"]
+    volumes:
+      - ./detectors/hedera:/home/ethsec/.local/lib/python3.10/site-packages/slither/detectors/hedera
+    working_dir: /home/ethsec/.local/lib/python3.10/site-packages/slither/detectors/hedera/test-cases
