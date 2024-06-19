@@ -27,9 +27,9 @@ def fetch_contract_bytecode(mirror_node_url, contract_id):
                     continue
                 if instruction.operand == HEDERA_ADDRESS:
                     address_detected = True
-                if instruction.operand in ['0fb65bf3', '2af0c59a', 'ea83f293', 'abb54eb5']:
+                if instruction.operand in ['0fb65bf3', '2af0c59a', 'ea83f293', 'abb54eb5']: # Replace with your function selectors
                     method_detected = True
-                if instruction.operand == KEY_VALUE_TYPE_SECP256K1 and instruction.name == 'PUSH1':
+                if instruction.operand == KEY_VALUE_TYPE_SECP256K1 and instruction.name == 'PUSH1': # Replace with your param value
                     param_detected = True
             if address_detected and call_detected:
                 print('Usage of Hedera address 0x167 detected. Calls to this address may have been possibly made.')
