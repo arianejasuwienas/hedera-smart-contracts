@@ -2,7 +2,6 @@
 Detector to find instances where `ecrecover` is used in Solidity contracts.
 """
 from pprint import pprint
-from var_dump import var_dump
 from slither.core.declarations import Function, Contract
 from slither.detectors.abstract_detector import AbstractDetector, DetectorClassification
 from slither.core.cfg.node import Node, NodeType
@@ -21,7 +20,7 @@ class PrecompileCall(AbstractDetector):
     HELP = 'Detects usage of calls to the Hedera precompile address in smart contract functions.'
     IMPACT = DetectorClassification.MEDIUM
     CONFIDENCE = DetectorClassification.HIGH
-    WIKI = "https://docs.hedera.com/hedera/core-concepts/hedera-smart-contracts"
+    WIKI = "https://docs.hedera.com/hedera/core-concepts/smart-contracts/compiling-smart-contracts#hedera-token-service"
     WIKI_TITLE = "Usage of Hedera Precompile"
     WIKI_DESCRIPTION = "This detector identifies instances where smart contracts make calls to the Hedera precompile address (0x167)."
     WIKI_RECOMMENDATION = "Ensure that calls to the Hedera precompile address are securely handled and verified to prevent misuse or unintended behavior."
