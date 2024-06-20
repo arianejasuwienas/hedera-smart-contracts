@@ -77,9 +77,9 @@ contract TokenCreateContract is HederaTokenService, ExpiryHelper, KeyHelper {
                         if isinstance(ir, (HighLevelCall, LowLevelCall)):
                             if self.address_const_called_by_value(ir, address_vars):
                                 entrypoint = self.get_entrypoint(function)
-                                if entrypoint is not None:
+                                if entrypoint is not None and function.contract.name in str(node.source_mapping.filename.short):
                                     entrypoint_string = ''
-                                    if len(entrypoint) > 1:
+                                    if entrypoint[::-1][0] != f"{function.contract.name}.{function.full_name}":
                                         entrypoint_string = f" Start investigating in {entrypoint[::-1][0]}."
                                     call_type = "variable"
                                     if isinstance(ir.destination, Constant):
