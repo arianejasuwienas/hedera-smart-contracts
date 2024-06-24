@@ -10,10 +10,10 @@ This following example determines the likelihood that a Smart Contract creates a
 - `requests-cache` library: A transparent, persistent cache for the `requests` library to improve performance by caching HTTP responses.
 - `evmdasm` library: A tool for disassembling EVM bytecode to human-readable assembly instructions.
 
-To install the required Python libraries, run:
+To install the required P requests requests-cache evmdasmython libraries, run:
 
 ```bash
-pip install requests requests-cache evmdasm
+pip install
 ```
 
 ## Usage
